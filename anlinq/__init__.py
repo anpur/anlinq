@@ -33,7 +33,7 @@ import itertools
 class AnLinq(object):
     """Allows to apply AnLinq-like methods to wrapped iterable"""
 
-    class LinqException(Exception):
+    class AnLinqException(Exception):
         """
         Special exception to be thrown by AnLinq
         """
@@ -45,7 +45,7 @@ class AnLinq(object):
         :param iterable: iterable to wrap
         """
         if iterable is None:
-            raise AnLinq.LinqException("iterable is None")
+            raise AnLinq.AnLinqException("iterable is None")
         if iterable.__class__ is AnLinq:
             self.iterable = iterable.iterable
         else:
@@ -59,6 +59,45 @@ class AnLinq(object):
         Allows to iterate AnLinq object
         """
         return iter(self.iterable)
+
+    def __getitem__(self, index):
+        """
+        Defines operator[]
+        :param index: numeric index of item in iterable
+        :returns: item
+        :rtype: object
+        """
+        count = 0
+        for item in self.iterable:
+            if count == index:
+                return item
+            count += 1
+        raise AnLinq.AnLinqException("Index " + repr(index) + " is out of range (" + repr(count) + ")")
+
+    def __len__(self):
+        """
+        Provides len(AnLinq) function
+        :returns: number of items in iterable
+        :rtype: int
+        """
+        return self.count()
+
+    def count(self):
+        """
+        Counts underlying items
+        :returns: number of items in iterable
+        :rtype: int
+        """
+        count = 0
+        for item in self.iterable:
+            count += 1
+        return count
+
+    def __eq__(self, other):
+        return self.iterable == other.iterable if isinstance(other, self.__class__) else self.to_list() == other
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def any(self, predicate=None):
         """
@@ -100,7 +139,7 @@ class AnLinq(object):
                 return i
             elif predicate(i):
                 return i
-        raise AnLinq.LinqException('No matching items!')
+        raise AnLinq.AnLinqException('No matching items!')
 
     def first_or_none(self, predicate=None):
         """
@@ -112,7 +151,7 @@ class AnLinq(object):
         """
         try:
             return self.first(predicate)
-        except AnLinq.LinqException:
+        except AnLinq.AnLinqException:
             return None
 
     def last(self, predicate=None):
@@ -131,7 +170,7 @@ class AnLinq(object):
                 last_item_set = True
 
         if not last_item_set:
-            raise AnLinq.LinqException('No matching items!')
+            raise AnLinq.AnLinqException('No matching items!')
         return last_item
 
     def last_or_none(self, predicate=None):
@@ -144,7 +183,7 @@ class AnLinq(object):
         """
         try:
             return self.last(predicate)
-        except AnLinq.LinqException:
+        except AnLinq.AnLinqException:
             return None
 
     def to_list(self):
@@ -172,7 +211,7 @@ class AnLinq(object):
             value = value_selector(i) if value_selector is not None else i
             if unique:
                 if key in keys:
-                    raise AnLinq.LinqException("Key '" + repr(key) + "' is used more than once.")
+                    raise AnLinq.AnLinqException("Key '" + repr(key) + "' is used more than once.")
                 keys.add(key)
             result[key] = value
         return result
