@@ -1,7 +1,7 @@
-__author__ = 'Anton'
+__author__ = 'Anton Purin'
 
 """
-anLinq - AnLinq analog for Python
+AnLinq - Linq analog for Python
 Contact: purin.anton@gmail.com
 
 The MIT License (MIT)
@@ -43,6 +43,8 @@ class AnLinq(object):
         """
         Instantiates AnLinq wrapper
         :param iterable: iterable to wrap
+        :return: item
+        :rtype: object
         """
         if iterable is None:
             raise AnLinq.AnLinqException("iterable is None")
@@ -64,7 +66,7 @@ class AnLinq(object):
         """
         Defines operator[]
         :param index: numeric index of item in iterable
-        :returns: item
+        :return: item
         :rtype: object
         """
         count = 0
@@ -77,7 +79,7 @@ class AnLinq(object):
     def __len__(self):
         """
         Provides len(AnLinq) function
-        :returns: number of items in iterable
+        :return: number of items in iterable
         :rtype: int
         """
         return self.count()
@@ -85,7 +87,7 @@ class AnLinq(object):
     def count(self):
         """
         Counts underlying items
-        :returns: number of items in iterable
+        :return: number of items in iterable
         :rtype: int
         """
         count = 0
@@ -94,9 +96,19 @@ class AnLinq(object):
         return count
 
     def __eq__(self, other):
+        """
+        Equality operator
+        :return: True if items are equal
+        :rtype: bool
+        """
         return self.iterable == other.iterable if isinstance(other, self.__class__) else self.to_list() == other
 
     def __ne__(self, other):
+        """
+        Negative equality operator
+        :return: True if items are equal
+        :rtype: bool
+        """
         return not self.__eq__(other)
 
     def any(self, predicate=None):
@@ -104,7 +116,7 @@ class AnLinq(object):
         Returns true if there any item which matches given predicate.
         If no predicate given returns True if there is any item at all.
         :param predicate: Function which takes item as argument and returns bool
-        :returns: Boolean
+        :return: True, if there any item matching predicate
         :rtype: bool
         """
         for i in self.iterable:
@@ -118,7 +130,7 @@ class AnLinq(object):
         """
         Returns true if all items match given predicate.
         :param predicate: Function which takes item as argument and returns bool
-        :returns: Boolean
+        :return: Boolean
         :rtype: bool
         """
         for i in self.iterable:
@@ -131,7 +143,7 @@ class AnLinq(object):
         Returns first item which matches predicate or first item if no predicate given.
         Raises exception, if no matching items found.
         :param predicate: Function which takes item as argument and returns bool
-        :returns: item
+        :return: item
         :rtype: object
         """
         for i in self.iterable:
@@ -146,7 +158,7 @@ class AnLinq(object):
         Returns first item which matches predicate or first item if no predicate given.
         Returns None, if no matching items found.
         :param predicate: Function which takes item as argument and returns bool
-        :returns: item
+        :return: item
         :rtype: object
         """
         try:
@@ -159,7 +171,7 @@ class AnLinq(object):
         Returns last item which matches predicate or last item if no predicate given.
         Raises exception, if no matching items found.
         :param predicate: Function which takes item as argument and returns bool
-        :returns: item
+        :return: item
         :rtype: object
         """
         last_item = None
@@ -178,7 +190,7 @@ class AnLinq(object):
         Returns last item which matches predicate or last item if no predicate given.
         Returns None, if no matching items found.
         :param predicate: Function which takes item as argument and returns bool
-        :returns: item
+        :return: item
         :rtype: object
         """
         try:
@@ -189,7 +201,7 @@ class AnLinq(object):
     def to_list(self):
         """
         Converts LinqIterable to list
-        :returns: list
+        :return: list
         :rtype: list
         """
         return list(self.iterable)
@@ -200,7 +212,7 @@ class AnLinq(object):
         :param key_selector: function which takes item and returns key for it
         :param value_selector: function which takes item and returns value for it
         :param unique: boolean, if True that will throw exception if keys are not unique
-        :returns: dict
+        :return: dict
         :rtype: dict
         """
         result = {}
@@ -220,7 +232,7 @@ class AnLinq(object):
         """
         Returns items which matching predicate function
         :param predicate: Function which takes item as argument and returns bool
-        :returns: results wrapped with AnLinq
+        :return: results wrapped with AnLinq
         :rtype: AnLinq
         """
         return AnLinq([i for i in self.iterable if predicate(i)])
@@ -229,7 +241,7 @@ class AnLinq(object):
         """
         Filters distinct values from enumerable
         :param key_selector: function which takes item and returns key for it
-        :returns: results wrapped with AnLinq
+        :return: results wrapped with AnLinq
         :rtype: AnLinq
         """
         key_selector = key_selector if key_selector is not None else lambda item: item
@@ -241,7 +253,7 @@ class AnLinq(object):
         Groups given items by keys.
         :param key_selector: function which takes item and returns key for it
         :param value_selector: function which takes item and returns value for it
-        :returns: Dictionary, where value if AnLinq for given key
+        :return: Dictionary, where value if AnLinq for given key
         :rtype: dict
         """
         key_selector = key_selector if key_selector is not None else lambda item: item
@@ -271,7 +283,7 @@ class AnLinq(object):
         """
         Takes only given number of items, of all available items if their count is less than number
         :param number: number of items to get
-        :returns: results wrapped with AnLinq
+        :return: results wrapped with AnLinq
         :rtype: AnLinq
         """
         def internal_take(iterable, number_arg):
@@ -288,7 +300,7 @@ class AnLinq(object):
         """
         Skips given number of items in enumerable
         :param number: number of items to get
-        :returns: results wrapped with AnLinq
+        :return: results wrapped with AnLinq
         :rtype: AnLinq
         """
         def internal_skip(iterable, number_arg):
@@ -305,7 +317,7 @@ class AnLinq(object):
         """
         Converts items in list with given function
         :param selector: Function which takes item and returns other item
-        :returns: results wrapped with AnLinq
+        :return: results wrapped with AnLinq
         :rtype: AnLinq
         """
         return AnLinq([selector(i) for i in self.iterable])
@@ -314,7 +326,7 @@ class AnLinq(object):
         """
         Converts items in list with given function
         :param selector: Function which takes item and returns iterable
-        :returns: results wrapped with AnLinq
+        :return: results wrapped with AnLinq
         :rtype: AnLinq
         """
         return AnLinq([i for i in [selector(sub) for sub in self.iterable]])
@@ -323,18 +335,19 @@ class AnLinq(object):
         """
         Allows to perform some action for each object in iterable, but not allows to redefine items
         :param func: Function which takes item as argument
-        :returns: self
+        :return: self
         :rtype: AnLinq
         """
         for i in self.iterable:
-            func(i)
+            if func(i) == True:
+                break
         return self
 
     def concat(self, iterable):
         """
         Concats two iterables
         :param iterable: Any iterable
-        :returns: self
+        :return: self
         :rtype: AnLinq
         """
         return AnLinq(itertools.chain(self.iterable, iterable))
@@ -343,7 +356,7 @@ class AnLinq(object):
         """
         Concats iterable with single item
         :param item: Any item
-        :returns: self
+        :return: self
         :rtype: AnLinq
         """
         return AnLinq(itertools.chain(self.iterable, [item]))
@@ -352,7 +365,7 @@ class AnLinq(object):
         """
         Filters items except given iterable
         :param iterable: Any iterable
-        :returns: self
+        :return: self
         :rtype: AnLinq
         """
         return AnLinq([i for i in self.iterable if i not in iterable])
@@ -361,7 +374,7 @@ class AnLinq(object):
         """
         Intersection between two iterables
         :param iterable: Any iterable
-        :returns: self
+        :return: self
         :rtype: AnLinq
         """
         return AnLinq([i for i in self.iterable if i in iterable])
