@@ -185,6 +185,13 @@ class TestAnLinq(unittest.TestCase):
         self.assertDictEqual(AnLinq(self.number_array).group_by(lambda x: 'even' if x % 2 == 0 else 'odd'),
                              {'even': [2, 4, 6, 8, 0], 'odd': [1, 3, 5, 7, 9]})
 
+    def test_map(self):
+        self.assertEqual(AnLinq(self.number_array).map(lambda x: '#' + repr(x)),
+                         ['#1', '#2', '#3', '#4', '#5', '#6', '#7', '#8', '#9', '#0'])
+
+    def test_reduce(self):
+        self.assertEqual(AnLinq(self.number_array).reduce(lambda prev, this, index: prev + this, 0), 45)
+        self.assertEqual(AnLinq(self.number_array).reduce(lambda prev, this, index: prev + this, -1), 44)
 
 if __name__ == '__main__':
     unittest.main()

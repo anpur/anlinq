@@ -322,6 +322,15 @@ class AnLinq(object):
         """
         return AnLinq([selector(i) for i in self.iterable])
 
+    def map(self, selector):
+        """
+        Converts items in list with given function
+        :param selector: Function which takes item and returns other item
+        :return: results wrapped with AnLinq
+        :rtype: AnLinq
+        """
+        return self.select(selector)
+
     def select_many(self, selector):
         """
         Converts items in list with given function
@@ -330,6 +339,27 @@ class AnLinq(object):
         :rtype: AnLinq
         """
         return AnLinq([i for i in [selector(sub) for sub in self.iterable]])
+
+    def aggregate(self, func, seed=None):
+        """
+        Reduces list to a single variable
+        :param func: function which takes prev value, this value and index to aggregate one step
+        :param seed: initial value, will be used as prev on first iteration
+        :return: reduced value
+        """
+        for index, i in enumerate(self.iterable):
+            seed = func(seed, i, index)
+
+        return seed
+
+    def reduce(self, func, seed=None):
+        """
+        Reduces list to a single variable
+        :param func: function which takes prev value, this value and index to aggregate one step
+        :param seed: initial value, will be used as prev on first iteration
+        :return: reduced value
+        """
+        return self.aggregate(func, seed)
 
     def foreach(self, func):
         """
