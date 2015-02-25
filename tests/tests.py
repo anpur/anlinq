@@ -1,5 +1,5 @@
 import unittest
-from anlinq import AnLinq
+from AnLinq import AnLinq
 
 
 class TestAnLinq(unittest.TestCase):
