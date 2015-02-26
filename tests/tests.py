@@ -1,5 +1,5 @@
 import unittest
-from AnLinq import AnLinq
+from anlinq import AnLinq
 
 
 class TestAnLinq(unittest.TestCase):
@@ -192,6 +192,34 @@ class TestAnLinq(unittest.TestCase):
     def test_reduce(self):
         self.assertEqual(AnLinq(self.number_array).reduce(lambda prev, this, index: prev + this, 0), 45)
         self.assertEqual(AnLinq(self.number_array).reduce(lambda prev, this, index: prev + this, -1), 44)
+
+    def test_order_by(self):
+        self.assertEqual(AnLinq(self.number_array_duplicates_distinct).order_by(), [1, 2, 3, 5])
+        self.assertEqual(AnLinq(self.number_array_duplicates_distinct).order_by(descending=True), [5, 3, 2, 1])
+
+        reverse_comparer = lambda x, y: y - x  # results will be reversed with this comparer
+        self.assertEqual(AnLinq(self.number_array_duplicates_distinct).order_by(reverse_comparer, True), [1, 2, 3, 5])
+
+        def pokemon_comparer(x, y):
+            """
+            pikachu is the best pockemon, and everybody else are kinda equal
+            """
+            x = x.lower()
+            y = y.lower()
+
+            if x == 'pikachu' and y == 'pikachu':
+                return 0
+            elif x == 'pikachu':
+                return -1
+            elif y == 'pikachu':
+                return 1
+            else:
+                return 0
+
+        pokemons = ['Sandshrew', 'Vulpix', 'Pikachu', 'Pidgeotto', 'Pikachu', 'Raticate', 'Pidgeot']
+        ordered_pokemons = ['Pikachu', 'Pikachu', 'Sandshrew', 'Vulpix', 'Pidgeotto', 'Raticate', 'Pidgeot' ]
+        self.assertEqual(AnLinq(pokemons).order_by(pokemon_comparer), ordered_pokemons)
+
 
 if __name__ == '__main__':
     unittest.main()

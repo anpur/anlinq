@@ -28,6 +28,8 @@ THE SOFTWARE.
 """
 
 import itertools
+import sys
+import functools
 
 
 class AnLinq(object):
@@ -90,6 +92,9 @@ class AnLinq(object):
         :return: number of items in iterable
         :rtype: int
         """
+        if hasattr(self.iterable, '__len__'):
+            return len(self.iterable)
+
         count = 0
         for item in self.iterable:
             count += 1
@@ -270,14 +275,18 @@ class AnLinq(object):
             result[key] = AnLinq(result[key])
         return result
 
-    def order_by(self, value_selector=None, comparer=None, descending=False):
+    def order_by(self, comparer=None, descending=False):
         """
         Orders items.
         :param value_selector: function which takes item and returns value for it
         :param comparer: function which takes to items and compare them returning int
         :param descending: shows how items will be sorted
         """
-        return AnLinq(sorted(self.iterable, comparer, value_selector, descending))
+        if sys.version.startswith('2'):
+            return AnLinq(sorted(self.iterable, comparer, None, descending))
+        else:
+            key = functools.cmp_to_key(comparer) if comparer else None
+            return AnLinq(sorted(self.iterable, key=key, reverse=descending))
 
     def take(self, number):
         """
